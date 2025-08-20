@@ -11,12 +11,14 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { OctagonAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { FaGithub, FaGoogle } from "react-icons/fa";
 
 export const SignInView = () => {
     const router = useRouter();
+
     const [error, setError] = useState<string | null>(null);
     const [pending, setPending] = useState<boolean>(false);
 
@@ -45,6 +47,25 @@ export const SignInView = () => {
                 setError(error.message)
             }
         })
+    }
+
+    function socialSignin(provider: "github" | "google") {
+        setError(null);
+        setPending(true);
+
+        authClient.signIn.social({
+            provider: provider,
+            callbackURL: "/"
+        }, {
+            onSuccess: () => {
+                setPending(false);
+            },
+            onError: ({ error }) => {
+                setPending(false);
+                setError(error.message);
+            }
+        })
+
     }
 
     return (
@@ -119,11 +140,11 @@ export const SignInView = () => {
                                     </span>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
-                                    <Button disabled={pending} variant={"outline"} type="button" className="w-full">
-                                        Google
+                                    <Button onClick={() => socialSignin("google")} disabled={pending} variant={"outline"} type="button" className="w-full">
+                                        <FaGoogle />Google
                                     </Button>
-                                    <Button disabled={pending} variant={"outline"} type="button" className="w-full">
-                                        Github
+                                    <Button onClick={() => socialSignin("github")} disabled={pending} variant={"outline"} type="button" className="w-full">
+                                        <FaGithub />Github
                                     </Button>
                                 </div>
                                 <div className="text-center text-sm">
