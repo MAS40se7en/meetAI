@@ -3,83 +3,18 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function HomeView() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [error, setError] = useState("");
-
-  const router = useRouter();
-
-  const { data: session, isPending } = authClient.useSession();
-
-  function onSubmit() {
-    authClient.signUp.email({
-      email,
-      name,
-      password
-    }, {
-      onError: (res) => {
-        console.log(res);
-        setError(res.error.message)
-      },
-      onSuccess: (res) => {
-        window.alert("User created successfully");
-      }
-    })
-  }
-  
-  function onLogin() {
-    authClient.signIn.email({
-      email,
-      password
-    }, {
-      onError: (res) => {
-        console.log(res);
-        setError(res.error.message)
-      },
-      onSuccess: (res) => {
-        window.alert("User created successfully");
-      }
-    })
-  }
-
-  if (isPending) {
-    return <div>Loading...</div>
-  }
-
-  if (session) {
-    return (
-      <div>
-        <h1>Welcome {session.user.name}</h1>
-        <Button onClick={() => authClient.signOut({
-            fetchOptions: {
-                onSuccess: () => router.push("/sign-in")
-            }
-        })}>Sign Out</Button>
-      </div>
-    )
-  }
+  const trpc = useTRPC();
+  const { data } = useQuery(trpc.hello.queryOptions({ text: 'world' }));
 
   return (
     <div>
-      <div>
-      <h1>Create User</h1>
-      <Input type="text" placeholder="name" value={name} onChange={(e) => setName(e.target.value)} />
-      <Input type="email" placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-      <Input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      <Button onClick={onSubmit}>Create User</Button>
-      {error && <p className="text-red-500">{error}</p>}
-      </div>
-      <div>
-        <h1>Login</h1>
-        <Input type="email" placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <Input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <Button onClick={onLogin}>Login</Button>
-      </div>
+      {data?.greeting}
     </div>
   );
 }
