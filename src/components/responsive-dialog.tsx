@@ -12,7 +12,7 @@ interface ResponsiveDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
-const ResponsiveDialog = ({
+export const ResponsiveDialog = ({
     title,
     description,
     children,
@@ -48,5 +48,3 @@ const ResponsiveDialog = ({
     </Dialog>
   )
 }
-
-export default ResponsiveDialog
