@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE, dEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, MIN_PAGE_SIZE } from "@/constants";
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, MIN_PAGE_SIZE } from "@/constants";
 import { db } from "@/db";
 import { agents } from "@/db/schema";
 import { agentsInsertSchema, agentsUpdateSchema } from "@/lib/zod-schemas";
@@ -37,7 +37,7 @@ export const agentsRouter = createTRPCRouter({
                     .number()
                     .min(MIN_PAGE_SIZE)
                     .max(MAX_PAGE_SIZE)
-                    .default(dEFAULT_PAGE_SIZE),
+                    .default(DEFAULT_PAGE_SIZE),
                 search: z.string().nullish(),
             })
         )
