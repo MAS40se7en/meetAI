@@ -64,7 +64,7 @@ export const StatusFilter = () => {
             placeholder="Status"
             className="h-9"
             options={options}
-            onSelect={(value) => setFilters({ status: value as MeetingStatus })}
+            onSelect={(value) => setFilters({ status: value as MeetingStatus, page: 1 })}
             value={filters.status ?? ""}
         />
     )
