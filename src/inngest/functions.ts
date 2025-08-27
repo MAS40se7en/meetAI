@@ -101,9 +101,20 @@ export const meetingsProcessing = inngest.createFunction(
       })
     })
 
-    const { output } = await summarizer.run(
-      "Summarize the following transcript: " + JSON.stringify(transcriptWithSpeakers)
-    )
+    let summary;
+    try {
+      const { output } = await summarizer.run(
+        "Summarize the following transcript: " + JSON.stringify(transcriptWithSpeakers)
+      );
+      if (!output || typeof output !== "string" || output.trim() === "") {
+        throw new Error("Summarizer agent returned invalid output.");
+      }
+      summary = output;
+    } catch (error) {
+      // Handle summarizer agent failure
+      console.error("Summarizer agent failed:", error);
+      summary = "Summary could not be generated due to an internal error.";
+    }
 
     await step.run("save-summary", async () => {
       await db
